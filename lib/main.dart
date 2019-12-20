@@ -44,13 +44,8 @@ class _MyHomePageState extends State<MyHomePage>
 
     super.initState();
 
-    controller =
-        AnimationController(duration: Duration(milliseconds: 1100), vsync: this)
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.completed) {
-              controller.dispose();
-            }
-          });
+    controller = AnimationController(
+        duration: Duration(milliseconds: 1200), vsync: this);
 
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       growAnimation =
@@ -61,16 +56,16 @@ class _MyHomePageState extends State<MyHomePage>
       ));
     }); */
 
-    growAnimation = Tween(begin: 0.0, end: 300.0).animate(CurvedAnimation(
+    growAnimation = Tween(begin: 0.0, end: 380.0).animate(CurvedAnimation(
       curve: Curves.easeInCirc,
       parent: controller,
     ));
 
-    slideAnimation1 = Tween(begin: Offset(-1.0, 0.0), end: Offset(0.0, 0.0))
-        .animate(CurvedAnimation(curve: Curves.easeInCirc, parent: controller));
+    slideAnimation1 =
+        Tween(begin: Offset(-1.0, 0.0), end: Offset.zero).animate(controller);
 
-    slideAnimation2 = Tween(begin: Offset(1.0, 0.0), end: Offset(0.0, 0.0))
-        .animate(controller);
+    slideAnimation2 =
+        Tween(begin: Offset(1.0, 0.0), end: Offset.zero).animate(controller);
 
     controller.forward();
   }
@@ -97,77 +92,69 @@ class _MyHomePageState extends State<MyHomePage>
         ),
       ),
       body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ShaderMask(
-              shaderCallback: (bounds) {
-                return LinearGradient(tileMode: TileMode.mirror, colors: [
-                  Color(0xff4286f4),
-                  Color(0xff6c63ff),
-                ]).createShader(bounds);
-              },
-              child: SlideTransition(
-                position: slideAnimation2,
-                child: Text(
-                  "Flutter Animations",
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+        child: SingleChildScrollView(
+          child: FittedBox(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ShaderMask(
+                  shaderCallback: (bounds) {
+                    return LinearGradient(tileMode: TileMode.mirror, colors: [
+                      Color(0xff4286f4),
+                      Color(0xff6c63ff),
+                    ]).createShader(bounds);
+                  },
+                  child: SlideTransition(
+                    position: slideAnimation2,
+                    child: Text(
+                      "Flutter Animations",
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  height: 60,
+                ),
+                AnimatedBuilder(
+                  animation: controller,
+                  builder: (context, widget) {
+                    return Image.asset(
+                      'assets/img/image.png',
+                      fit: BoxFit.cover,
+                      width: growAnimation.value,
+                    );
+                  },
+                ),
+                SizedBox(
+                  height: 60,
+                ),
+                SlideTransition(
+                  position: slideAnimation1,
+                  child: NiceButton(
+                    background: Color(0xff6c63ff),
+                    fontSize: 20,
+                    elevation: 3.0,
+                    radius: 50,
+                    gradientColors: [
+                      Color(0xff6c63ff),
+                      Color(0xff4286f4),
+                    ],
+                    onPressed: () {
+                      setState(() {
+                        // imgWidth = MediaQuery.of(context).size.width * .85;
+                      });
+                      // imgHeight = MediaQuery.of(context)
+                    },
+                    text: 'Welcome',
+                  ),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 60,
-            ),
-            /*  AnimatedContainer(
-              onEnd: () {
-                print('$imgWidth');
-              },
-              width: imgWidth,
-              duration: Duration(milliseconds: 800),
-              // height: imgHeight,
-              child: Image.asset(
-                'assets/img/image.png',
-                // width: imgWidth,
-              ),
-            ), */
-            AnimatedBuilder(
-              animation: controller,
-              builder: (context, widget) {
-                return Image.asset(
-                  'assets/img/image.png',
-                  fit: BoxFit.cover,
-                  width: growAnimation.value,
-                );
-              },
-            ),
-            SizedBox(
-              height: 60,
-            ),
-            SlideTransition(
-              position: slideAnimation1,
-              child: NiceButton(
-                background: Color(0xff6c63ff),
-                fontSize: 20,
-                elevation: 3.0,
-                radius: 50,
-                gradientColors: [
-                  Color(0xff6c63ff),
-                  Color(0xff4286f4),
-                ],
-                onPressed: () {
-                  setState(() {
-                    // imgWidth = MediaQuery.of(context).size.width * .85;
-                  });
-                  // imgHeight = MediaQuery.of(context)
-                },
-                text: 'Welcome',
-              ),
-            ),
-          ],
+          ),
         ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
